@@ -197,7 +197,8 @@ class MailTests(APITestCase):
             body='Body of Test Mail'
         )
 
-        response = self.client.post(f'/api/mails/{mail.id}/mark_as_read/')
+        response = self.client.patch(
+            f'/api/mails/{mail.id}/', {'is_read': True})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         mail.refresh_from_db()
         self.assertTrue(mail.is_read)
@@ -213,7 +214,8 @@ class MailTests(APITestCase):
             body='Body of Test Mail'
         )
 
-        response = self.client.post(f'/api/mails/{mail.id}/delete_mail/')
+        response = self.client.patch(
+            f'/api/mails/{mail.id}/delete_or_restore_mail/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         mail.refresh_from_db()
         # Письмо должно быть удалено отправителем

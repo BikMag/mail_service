@@ -41,7 +41,9 @@ class MailListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mail
         fields = ('id', 'sender', 'recipient', 'subject',
-                  'body', 'sent_at', 'is_read')
+                  'body', 'sent_at', 'is_read', 'is_spam',
+                  'is_deleted_by_sender', 'is_deleted_by_recipient'
+                  )
 
 
 class MailDetailSerializer(serializers.ModelSerializer):
@@ -54,7 +56,9 @@ class MailDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mail
         fields = ('id', 'sender', 'recipient', 'subject',
-                  'body', 'sent_at', 'is_read')
+                  'body', 'sent_at', 'is_read', 'is_spam',
+                  'is_deleted_by_sender', 'is_deleted_by_recipient'
+                  )
 
 
 class MailCreateSerializer(serializers.ModelSerializer):

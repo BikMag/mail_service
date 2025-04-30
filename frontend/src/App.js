@@ -6,11 +6,13 @@ import routes from './routes';
 import './App.css';
 
 function App() {
+  const token = localStorage.getItem('auth_token');
+
   return (
     <div className="d-flex flex-column vh-100">
     <Header />
     <div className="d-flex flex-grow-1 overflow-hidden">
-      <Sidebar />
+      {token && <Sidebar />}
       <main className="flex-grow-1 p-3 overflow-auto">
         <Routes>
           {routes.map((route, idx) => (

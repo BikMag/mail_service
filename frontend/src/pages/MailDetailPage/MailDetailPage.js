@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getMailDetail } from '../../services/mail';
+import { getMailDetail, markAsRead } from '../../services/mail';
 import './MailDetailPage.css';
 
 const MailDetailPage = () => {
@@ -19,6 +19,7 @@ const MailDetailPage = () => {
         }
         const response = await getMailDetail(id, token);
         setMail(response.data);
+        await markAsRead(id, true);
       } catch (err) {
         console.error('Ошибка загрузки письма', err);
       } finally {

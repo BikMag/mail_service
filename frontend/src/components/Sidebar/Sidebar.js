@@ -9,13 +9,13 @@ const Sidebar = () => {
   const categories = [
     { label: 'Входящие', value: 'inbox' },
     { label: 'Отправленные', value: 'sent' },
-    { label: 'Удалённые', value: 'deleted' },
-    { label: 'Спам', value: 'spam' }
+    { label: 'Спам', value: 'spam' },
+    { label: 'Корзина', value: 'deleted' }
   ];
 
   const handleCategoryChange = (value) => {
     setCategory(value);
-    navigate('/'); // Переход на главную
+    navigate('/');
   };
 
   return (
