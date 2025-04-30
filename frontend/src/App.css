@@ -1,0 +1,11 @@
+.main-layout {
+    display: flex;
+    margin-top: 60px;
+    /* если Header фиксирован */
+}
+
+.content {
+    margin-left: 220px;
+    padding: 20px;
+    flex: 1;
+}
