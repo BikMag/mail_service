@@ -1,13 +1,15 @@
+from django.http import FileResponse, Http404
 from django.db.models import Q
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
-from rest_framework.decorators import action
-from .models import Mail
+from rest_framework.decorators import action, api_view
+from .models import Attachment, Mail
 from .serializers import (
     MailListSerializer, MailDetailSerializer, MailCreateSerializer
 )
-from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class MailPagination(PageNumberPagination):
@@ -23,6 +25,7 @@ class MailViewSet(viewsets.ModelViewSet):
     queryset = Mail.objects.all()
     pagination_class = MailPagination
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         """
@@ -42,6 +45,26 @@ class MailViewSet(viewsets.ModelViewSet):
         elif self.action == 'list':
             return MailListSerializer
         return MailDetailSerializer
+
+    def create(self, request, *args, **kwargs):
+        files = request.FILES.getlist('attachments')
+        serializer = self.get_serializer(data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+        mail = serializer.save()
+
+        # обработка вложений
+        for f in files:
+            Attachment.objects.create(
+                mail=mail,
+                file=f,
+                filename=f.name
+            )
+
+        return Response(MailDetailSerializer(
+            mail,
+            context={'request': request}
+        ).data, status=201)
 
     @action(detail=True, methods=['patch'])
     def mark_as_read(self, request, pk=None):
@@ -112,3 +135,16 @@ class MailViewSet(viewsets.ModelViewSet):
 
         serializer = MailListSerializer(mails, many=True)
         return Response(serializer.data)
+
+
+@api_view(['GET'])
+def download_attachment(request, pk):
+    try:
+        attachment = Attachment.objects.get(pk=pk)
+        return FileResponse(
+            attachment.file.open('rb'),
+            as_attachment=True,
+            filename=attachment.filename or attachment.file.name
+        )
+    except Attachment.DoesNotExist:
+        raise Http404("Файл не найден")

@@ -19,11 +19,10 @@ from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import (
     SpectacularAPIView,
-    SpectacularRedocView,
     SpectacularSwaggerView,
 )
 from rest_framework.routers import DefaultRouter
-from mail.views import MailViewSet
+from mail.views import MailViewSet, download_attachment
 
 
 router = DefaultRouter()
@@ -34,16 +33,19 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.authtoken')),
+    path(
+        'api/attachments/<int:pk>/download/',
+        download_attachment,
+        name='download-attachment'
+    ),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/',
          SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
-    # path('api/schema/redoc/',
-    #      SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('api/', include(router.urls)),
 ]
 
-# if settings.DEBUG:
-#     urlpatterns += static(
-#         settings.STATIC_URL,
-#         document_root=settings.STATIC_ROOT
-#     )
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )

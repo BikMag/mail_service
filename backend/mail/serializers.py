@@ -4,10 +4,24 @@ from djoser.serializers import (
     UserSerializer, UserCreatePasswordRetypeSerializer
 )
 from rest_framework import serializers
-from .models import Mail
+from .models import Attachment, Mail
 
 
 User = get_user_model()
+
+
+class AttachmentSerializer(serializers.ModelSerializer):
+    file_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Attachment
+        fields = ('id', 'filename', 'file_url', 'uploaded_at')
+
+    def get_file_url(self, obj):
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(obj.file.url)
+        return obj.file.url
 
 
 class CustomUserSerializer(UserSerializer):
@@ -52,11 +66,12 @@ class MailDetailSerializer(serializers.ModelSerializer):
     """
     sender = CustomUserSerializer(read_only=True)
     recipient = CustomUserSerializer(read_only=True)
+    attachments = AttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Mail
         fields = ('id', 'sender', 'recipient', 'subject',
-                  'body', 'sent_at', 'is_read', 'is_spam',
+                  'body', 'attachments', 'sent_at', 'is_read', 'is_spam',
                   'is_deleted_by_sender', 'is_deleted_by_recipient'
                   )
 
