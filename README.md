@@ -7,7 +7,7 @@
 [![gunicorn](https://img.shields.io/badge/-gunicorn-464646?style=flat&logo=gunicorn&logoColor=ffffff&color=535754)](https://gunicorn.org/)
 <br>
 [![React](https://img.shields.io/badge/-React-464646?style=flat&logo=React&logoColor=B1EDFF&color=333333)](https://www.python.org/)
-[![Bootstrap](https://img.shields.io/badge/-Bootstrap-464646?style=flat&logo=Bootstrap&logoColor=B1EDFF&color=0075E2)](https://getbootstrap.com)
+[![Bootstrap](https://img.shields.io/badge/-Bootstrap-464646?style=flat&logo=Bootstrap&logoColor=9403FF&color=ffffff)](https://getbootstrap.com)
 <br>
 [![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-464646?style=flat&logo=PostgreSQL&logoColor=56e0e0&color=2550b2)](https://www.postgresql.org/)
 <br>
