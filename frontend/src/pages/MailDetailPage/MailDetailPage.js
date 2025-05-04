@@ -84,12 +84,21 @@ const MailDetailPage = () => {
               <ul className="list-group list-group-flush">
                 {mail.attachments.map((file) => (
                   <li key={file.id} className="list-group-item">
-                    <button
-                      onClick={() => downloadFile(file.id, file.filename)}
-                      className="btn btn-link p-0 text-start"
+                    <a
+                      href={file.file_url || file.file}
+                      download
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const link = document.createElement('a');
+                        link.href = file.file_url || file.file;
+                        link.download = file.filename || 'attachment';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }}
                     >
                       {getIcon(file.filename)} {file.filename}
-                    </button>
+                    </a>
                   </li>
                 ))}
               </ul>

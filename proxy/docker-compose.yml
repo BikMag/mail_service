@@ -1,0 +1,50 @@
+version: '3.3'
+
+volumes:
+  pg_data:
+  static:
+  media:
+
+
+services:
+
+  db:
+    container_name: mailservice-db
+    image: postgres:13.10
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  backend:
+    # Для бэка не забыть:
+    # 1) собрать статику для админки
+    # 2) перенести статику в /static/static
+    # 3) произвести миграции
+    # 4) загрузить фикстуры в бд
+    container_name: mailservice-back
+    build: ../backend/
+    env_file: .env
+    volumes:
+      - static:/static
+      - media:/media
+    depends_on:
+      - db
+
+  frontend:
+    container_name: mailservice-front
+    build: ../frontend
+    env_file: .env
+    command: cp -r /app/build/. /static/
+    volumes:
+      - static:/static
+  nginx:
+    container_name: mailservice-proxy
+    image: nginx:1.25.4-alpine
+    env_file: .env
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      # - ../docs/:/static/api/docs/
+      - static:/static
+      - media:/media

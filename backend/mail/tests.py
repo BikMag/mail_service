@@ -154,7 +154,7 @@ class MailTests(APITestCase):
             'subject': 'Test Mail',
             'body': 'This is a test email.',
         }
-        response = self.client.post('/api/mails/', data, format='json')
+        response = self.client.post('/api/mails/', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Mail.objects.count(), 1)
         self.assertEqual(Mail.objects.first().sender, self.user1)

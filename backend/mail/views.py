@@ -13,7 +13,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class MailPagination(PageNumberPagination):
-    page_size = 10  # можно настроить количество писем на страницу
+    page_size = 10  # Настройка количества писем на страницу
     page_size_query_param = 'page_size'
     max_page_size = 100
 
@@ -82,7 +82,7 @@ class MailViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['patch'])
     def delete_or_restore_mail(self, request, pk=None):
         """
-        Удалить или восстановить письмо. 
+        Удалить или восстановить письмо.
         Используется как отправителем, так и получателем.
         """
         mail = self.get_object()
@@ -114,8 +114,8 @@ class MailViewSet(viewsets.ModelViewSet):
 
         elif category == 'deleted':
             mails = Mail.objects.filter(
-                (Q(sender=user) & Q(is_deleted_by_sender=True)) |
-                (Q(recipient=user) & Q(is_deleted_by_recipient=True))
+                (Q(sender=user) & Q(is_deleted_by_sender=True))
+                | (Q(recipient=user) & Q(is_deleted_by_recipient=True))
             )
 
         elif category == 'spam':
@@ -139,12 +139,15 @@ class MailViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 def download_attachment(request, pk):
+    """
+    Загрузка вложения из письма.
+    """
     try:
         attachment = Attachment.objects.get(pk=pk)
         return FileResponse(
-            attachment.file.open('rb'),
+            attachment.file,
             as_attachment=True,
-            filename=attachment.filename or attachment.file.name
+            filename=attachment.filename
         )
     except Attachment.DoesNotExist:
         raise Http404("Файл не найден")
